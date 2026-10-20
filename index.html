@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support — Renevo</title>
+<meta name="title-en" content="Support — Renevo">
+<meta name="title-ru" content="Поддержка — Renevo">
+<meta name="description" content="Help and contact for the Renevo app.">
+<style>
+/* Renevo:浅色/深色自适应,手机优先。本页自带样式,不依赖外部文件。 */
+:root {
+  --bg: #f2f5f3;
+  --surface: #ffffff;
+  --fg: #14201c;
+  --muted: #5b6b65;
+  --line: #d3dcd8;
+  --accent: #0e7c66;
+  --accent-soft: #d6efe8;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1412;
+    --surface: #17211e;
+    --fg: #e6efeb;
+    --muted: #93a59e;
+    --line: #2b3a35;
+    --accent: #3dd9b0;
+    --accent-soft: #14382f;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0 20px 80px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #16a58b, #0a5545);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.mark svg { width: 26px; height: 26px; }
+header h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+header .sub { color: var(--muted); font-size: 14px; margin: 2px 0 0; }
+h2 { font-size: 22px; margin: 40px 0 12px; letter-spacing: -0.01em; }
+h2:first-of-type { margin-top: 0; }
+h3 { font-size: 17px; margin: 28px 0 8px; }
+p, li { color: var(--fg); }
+.lede { font-size: 18px; color: var(--muted); }
+.meta { color: var(--muted); font-size: 14px; margin: 0 0 32px; }
+ul, ol { padding-left: 22px; }
+li { margin: 6px 0; }
+a { color: var(--accent); }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 20px 0;
+}
+.card h3 { margin-top: 0; }
+.card p:last-child, .card ul:last-child { margin-bottom: 0; }
+.highlight {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  margin: 24px 0;
+}
+.highlight p { margin: 0; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 20px 0; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 600;
+}
+.scroll { overflow-x: auto; }
+footer {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+}
+footer a { color: var(--muted); }
+/* 语言切换:默认英文可见(没有 JS 时也能读),下面的脚本按语言代码切换 */
+[data-lang="ru"] { display: none; }
+html.lang-ru [data-lang="ru"] { display: revert; }
+html.lang-ru [data-lang="en"] { display: none; }
+</style>
+<script>
+/* 语言切换:?lang=ru 或 ?lang=en;没有参数时按浏览器语言,默认英文。
+   在 <head> 里同步执行,避免切换时闪烁。 */
+(function () {
+  var supported = ["en", "ru"];
+
+  function requested() {
+    var match = /[?&]lang=([a-zA-Z-]+)/.exec(location.search) ||
+                /^#(?:lang=)?([a-zA-Z-]+)$/.exec(location.hash);
+    return match ? match[1] : null;
+  }
+
+  function normalize(code) {
+    if (!code) return null;
+    code = code.toLowerCase().split("-")[0];
+    return supported.indexOf(code) >= 0 ? code : null;
+  }
+
+  var lang = normalize(requested());
+  if (!lang) {
+    var list = navigator.languages || [navigator.language];
+    for (var i = 0; i < list.length && !lang; i++) lang = normalize(list[i]);
+  }
+  if (!lang) lang = "en";
+
+  var root = document.documentElement;
+  root.setAttribute("lang", lang);
+  root.className = (root.className || "").replace(/\blang-\w+\b/g, "").trim() + " lang-" + lang;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var title = document.querySelector('meta[name="title-' + lang + '"]');
+    if (title) document.title = title.getAttribute("content");
+
+    var other = lang === "ru" ? "en" : "ru";
+    var links = document.querySelectorAll("[data-lang-switch]");
+    for (var i = 0; i < links.length; i++) {
+      links[i].setAttribute("href", location.pathname + "?lang=" + other);
+    }
+  });
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="mark" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round">
+      <path d="M12 3.2a8.8 8.8 0 1 0 8.4 6.1"></path>
+      <circle cx="12" cy="12" r="2.6" fill="#fff" stroke="none"></circle>
+    </svg>
+  </div>
+  <div>
+    <h1>Renevo</h1>
+    <p class="sub"><span data-lang="en">Support</span><span data-lang="ru">Поддержка</span></p>
+  </div>
+</header>
+
+<!-- ===================== English ===================== -->
+<div data-lang="en">
+
+<p class="lede">Something not working, or an idea for the app? Write to <a href="mailto:qlinnovation@outlook.com">qlinnovation@outlook.com</a> and we will get back to you.</p>
+
+<div class="card">
+  <h3>When reporting a problem</h3>
+  <p>It helps a lot if you include your iPhone or iPad model, your iOS version, the app version (Settings → Version), and what you were doing when it happened. Please do not send screenshots that contain anything private.</p>
+</div>
+
+<h2>Common questions</h2>
+
+<h3>Where is my data stored?</h3>
+<p>On your device. If you turn on iCloud sync in Settings, it is also stored in your own iCloud account so it appears on your other devices. We never receive it. See the <a href="../privacy/">Privacy Policy</a>.</p>
+
+<h3>I got a new phone. How do I move my data?</h3>
+<p>Turn on <strong>Settings → iCloud → Sync with iCloud</strong> on the old phone first, wait for the status to show it has synced, then turn it on with the same Apple Account on the new phone. Receipt photos are not synced and stay on the old device.</p>
+
+<h3>Why is sync off by default?</h3>
+<p>So that the app stores nothing outside your device unless you decide otherwise. You can turn it on at any time.</p>
+
+<h3>The monthly total ignores some subscriptions</h3>
+<p>Totals are shown in your main currency. A subscription in another currency is counted only once you enter an exchange rate for it in <strong>Settings → Exchange rates</strong>. The summary card tells you how many entries were not converted.</p>
+
+<h3>I’m not getting reminders</h3>
+<p>Check that notifications are allowed in iOS Settings → Renevo → Notifications. Reminders fire at 9:00 on the day you chose, and a subscription marked inactive sends none.</p>
+
+<h3>Scanning read the receipt wrong</h3>
+<p>Recognition happens on your device and is not perfect with creased, faded, or dimly lit receipts. Every field it fills in can be edited before you save. A flatter receipt in even light usually reads much better.</p>
+
+<h3>Does the app cancel subscriptions for me?</h3>
+<p>No. It keeps records and reminds you, and the cancellation guide shows where to cancel, but you cancel with the service yourself. Marking something inactive in the app changes nothing with that service.</p>
+
+<h3>A cancellation link or step is out of date</h3>
+<p>Services change their pages without notice. Tell us at <a href="mailto:qlinnovation@outlook.com">qlinnovation@outlook.com</a> and we will fix it in the next update.</p>
+
+<h3>How do I delete everything?</h3>
+<p>Delete individual entries in the app, or delete the app to remove all local data. If you used iCloud sync, also remove the app’s iCloud data in iOS Settings → your name → iCloud.</p>
+
+<footer>
+  <p>Renevo · <a href="../">Home</a> · <a href="../privacy/">Privacy Policy</a> · <a href="../terms/">Terms of Use</a> · <a href="?lang=ru" data-lang-switch>Русская версия</a></p>
+</footer>
+
+</div>
+
+<!-- ===================== Русский ===================== -->
+<div data-lang="ru">
+
+<p class="lede">Что-то не работает или есть идея для приложения? Напишите на <a href="mailto:qlinnovation@outlook.com">qlinnovation@outlook.com</a>, и мы ответим.</p>
+
+<div class="card">
+  <h3>Если сообщаете о проблеме</h3>
+  <p>Очень помогут модель iPhone или iPad, версия iOS, версия приложения (Настройки → Версия) и описание того, что вы делали. Пожалуйста, не присылайте скриншоты с личной информацией.</p>
+</div>
+
+<h2>Частые вопросы</h2>
+
+<h3>Где хранятся мои данные?</h3>
+<p>На вашем устройстве. Если включить синхронизацию с iCloud в настройках, они также сохранятся в вашем аккаунте iCloud и появятся на других ваших устройствах. Мы их не получаем. Подробнее — в <a href="../privacy/">политике конфиденциальности</a>.</p>
+
+<h3>Купил новый телефон. Как перенести данные?</h3>
+<p>Сначала включите <strong>Настройки → iCloud → Синхронизация с iCloud</strong> на старом телефоне и дождитесь, когда статус покажет, что синхронизация прошла. Затем включите её на новом устройстве с тем же аккаунтом Apple. Фотографии чеков не синхронизируются и останутся на старом устройстве.</p>
+
+<h3>Почему синхронизация выключена по умолчанию?</h3>
+<p>Чтобы приложение не хранило ничего за пределами вашего устройства, пока вы сами этого не захотите. Включить её можно в любой момент.</p>
+
+<h3>В итог за месяц попали не все подписки</h3>
+<p>Итоги показываются в основной валюте. Подписка в другой валюте учитывается, только когда вы укажете для неё курс в разделе <strong>Настройки → Курсы валют</strong>. На карточке итогов написано, сколько записей не пересчитано.</p>
+
+<h3>Не приходят напоминания</h3>
+<p>Проверьте, разрешены ли уведомления в Настройках iOS → Renevo → Уведомления. Напоминания приходят в 9:00 в выбранный день, а для отключённых подписок не отправляются.</p>
+
+<h3>Чек распознался неправильно</h3>
+<p>Распознавание выполняется на устройстве и не идеально работает с мятыми, выцветшими или плохо освещёнными чеками. Любое поле можно исправить перед сохранением. Ровный чек при хорошем освещении читается намного лучше.</p>
+
+<h3>Приложение отменяет подписки за меня?</h3>
+<p>Нет. Оно ведёт учёт и напоминает, а инструкция показывает, где отменить, но отменяете вы сами у сервиса. Отметка «отключена» в приложении ничего не меняет в самом сервисе.</p>
+
+<h3>Ссылка или шаги отмены устарели</h3>
+<p>Сервисы меняют свои страницы без предупреждения. Напишите на <a href="mailto:qlinnovation@outlook.com">qlinnovation@outlook.com</a>, и мы исправим это в следующем обновлении.</p>
+
+<h3>Как удалить все данные?</h3>
+<p>Удаляйте записи в приложении или удалите само приложение — тогда все локальные данные будут стёрты. Если вы пользовались синхронизацией, дополнительно удалите данные приложения в Настройках iOS → ваше имя → iCloud.</p>
+
+<footer>
+  <p>Renevo · <a href="../">Главная</a> · <a href="../privacy/">Политика конфиденциальности</a> · <a href="../terms/">Условия использования</a> · <a href="?lang=en" data-lang-switch>English version</a></p>
+</footer>
+
+</div>
+
+</div>
+</body>
+</html>
